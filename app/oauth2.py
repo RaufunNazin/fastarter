@@ -1,9 +1,9 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from . import schemas
+from . import models
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from . import models
+from . import schemas
 from .database import SessionLocal
 from dotenv import load_dotenv
 import os
@@ -31,7 +31,7 @@ def verify_access_token(token : str, credentials_exception) :
     
         if not id :
             raise credentials_exception
-        token_data = schemas.TokenData(id = id, email = email)
+        token_data = models.TokenData(id = id, email = email)
     except JWTError :
         raise credentials_exception
     return token_data
@@ -46,7 +46,7 @@ def get_current_user(token : str = Depends(oauth2_scheme)) :
 
 def check_authorization(user) :
     db = SessionLocal()
-    user_from_db = db.query(models.User).filter(models.User.id == user.id).first()
+    user_from_db = db.query(schemas.User).filter(schemas.User.id == user.id).first()
     if user_from_db.role != 1 :
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Unauthorized Access")
     db.close()

@@ -1,13 +1,30 @@
-.history
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
+# Environments
 .env
-/.env
+.venv/
+venv/
+env/
+ENV/
 
-env
-./.env
+# Database (SQLite)
+*.db
+*.sqlite3
 
+# Alembic
+# We keep the alembic/ folder but ignore the cache/compiled files
+alembic/__pycache__/
 
-/venv
-venv
+# FastAPI / Static
+/static/
 
-/static
+# OS/IDE specific
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+.dockerignore

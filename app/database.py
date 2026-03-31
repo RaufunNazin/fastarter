@@ -1,19 +1,27 @@
+# app/database.py
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-url = os.getenv("DB_URL")
-engine = create_engine(url)
-SessionLocal = sessionmaker(autocommit = False, autoflush = False, bind = engine)
-Base = declarative_base()
+# Rename to DATABASE_URL for clarity (matches what we put in env.py earlier)
+DATABASE_URL = os.getenv("DB_URL")
 
-def get_db() :
+# For SQLite, you often need 'check_same_thread=False'
+# engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# New SQLAlchemy 2.0 way to define Base
+class Base(DeclarativeBase):
+    pass
+
+def get_db():
     db = SessionLocal()
-    try :
+    try:
         yield db
-    finally :
+    finally:
         db.close()
