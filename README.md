@@ -59,7 +59,7 @@ alembic upgrade head
 
 ### Making Changes
 
-Whenever you modify `models.py` (e.g., adding a new column or changing a data type):
+Whenever you modify `schemas.py` (e.g., adding a new column or changing a data type):
 
 1.  **Generate a script:**
     `alembic revision --autogenerate -m "add phone to user"`
@@ -95,8 +95,8 @@ The API documentation will be available at:
 
 ## Project Structure
 
-  * `app/models.py`: SQLAlchemy database models.
-  * `app/schemas.py`: Pydantic models for request/response validation.
+  * `app/schemas.py`: SQLAlchemy database schemas.
+  * `app/models.py`: Pydantic schemas for request/response validation.
   * `app/routers/`: Modularized API endpoints.
   * `alembic/`: Database migration history and configuration.
   * `static/`: Placeholder for static file serving.
