@@ -53,6 +53,7 @@ def get_info(db: Session = Depends(get_db), user = Depends(oauth2.get_current_us
 
 @router.get("/users", tags=['user'])
 def get_users(db: Session = Depends(get_db), user = Depends(oauth2.get_current_user)):
-    check_authorization(user)
+    # Pass the existing db session into the authorization function
+    check_authorization(user, db)
     users = db.query(models.User).all()
     return users

@@ -1,5 +1,6 @@
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+# Added timezone to imports
+from datetime import datetime, timedelta, timezone 
 from . import schemas
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -18,7 +19,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
 
 def create_access_token(data : dict) :
     to_encode = data.copy()
-    expire_time = datetime.utcnow() + timedelta(minutes = EXPIRATION_TIME)
+    # Swapped utcnow() for now(timezone.utc) and changed minutes to seconds
+    expire_time = datetime.now(timezone.utc) + timedelta(seconds = EXPIRATION_TIME)
     to_encode.update({ "exp" : expire_time })
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encoded_jwt
@@ -44,10 +46,9 @@ def get_current_user(token : str = Depends(oauth2_scheme)) :
     token_data = verify_access_token(token, credentials_exception)
     return token_data
 
-def check_authorization(user) :
-    db = SessionLocal()
+# Added db argument and removed SessionLocal usage. Changed 401 to 403 (standard for role rejections).
+def check_authorization(user, db) :
     user_from_db = db.query(models.User).filter(models.User.id == user.id).first()
     if user_from_db.role != 1 :
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Unauthorized Access")
-    db.close()
+        raise HTTPException(status_code = status.HTTP_403_FORBIDDEN, detail = "Unauthorized Access")
     return user_from_db
